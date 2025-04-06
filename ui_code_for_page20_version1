@@ -38,7 +38,7 @@ fun PaymentMethodScreen() {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Header
+         
             Text(
                 text = "Payment method",
                 fontSize = 20.sp,
@@ -46,7 +46,7 @@ fun PaymentMethodScreen() {
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Cash option
+          
             PaymentOption(
                 title = "Cash",
                 subtitle = "DA cash",
@@ -57,7 +57,7 @@ fun PaymentMethodScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Card option
+            
             PaymentOption(
                 title = "Card Edahabia",
                 subtitle = "Add Card",
@@ -68,7 +68,7 @@ fun PaymentMethodScreen() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Continue button
+          
             Button(
                 onClick = { /* Handle continue */ },
                 modifier = Modifier
