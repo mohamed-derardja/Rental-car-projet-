@@ -265,6 +265,5 @@ fun PreviewPaymentMethod() {
     PaymentMethod()
 }
 
-// Content Components remain the same
-// MainContent, CashOption, CardOption, and BottomBar
+
 
