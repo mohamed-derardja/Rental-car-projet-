@@ -1,7 +1,7 @@
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,22 +17,36 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
+import androidx.compose.ui.unit.Dp
+
+private const val CASH = "Cash"
+private const val CARD = "Card"
+
+data class PaymentMethodOption(
+    val title: String,
+    val subtitle: String,
+    val key: String,
+    val iconRes: Int? = null
+)
 
 @Composable
 fun PaymentMethod() {
-    var selectedOption by remember { mutableStateOf("Cash") }
+    var selectedOption by remember { mutableStateOf(CASH) }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF2F5FA))
     ) {
+        val screenWidth = maxWidth
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                PaymentHeader()
+                PaymentHeader(screenWidth)
                 PaymentOptions(selectedOption) { selectedOption = it }
             }
             ContinueButton()
@@ -41,19 +55,21 @@ fun PaymentMethod() {
 }
 
 @Composable
-private fun PaymentHeader() {
+private fun PaymentHeader(screenWidth: Dp) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
+        // Back button
         Box(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(Color.White)
-                .border(1.dp, Color.LightGray, CircleShape)
+                .border(1.dp, Color(0xFFE0E0E0), CircleShape)
                 .clickable { /* Handle back navigation */ },
             contentAlignment = Alignment.Center
         ) {
@@ -64,23 +80,23 @@ private fun PaymentHeader() {
             )
         }
 
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Payment method",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 42.dp))
+        // Title with centered alignment
+        Text(
+            text = "Payment method",
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
 
-            Image(
-                painter = painterResource(id = R.drawable.sparcles),
-                contentDescription = "Sparkle",
-                modifier = Modifier.size(90.85.dp, 84.dp)
-            )
-        }
+        // Sparkle decoration with responsive sizing
+        Image(
+            painter = painterResource(id = R.drawable.sparcles),
+            contentDescription = "Sparkle",
+            modifier = Modifier
+                .size((screenWidth * 0.25f).coerceAtMost(100.dp))
+                .padding(end = 8.dp)
+        )
     }
 }
 
@@ -89,30 +105,37 @@ private fun PaymentOptions(
     selectedOption: String,
     onOptionSelected: (String) -> Unit
 ) {
+    val options = listOf(
+        PaymentMethodOption(
+            title = "Cash",
+            subtitle = "DA cash",
+            key = CASH
+        ),
+        PaymentMethodOption(
+            title = "Card Edahabia",
+            subtitle = "Add Card",
+            key = CARD,
+            iconRes = R.drawable.credit_card_icon
+        )
+    )
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(vertical = 8.dp)
     ) {
-        // Cash option
-        PaymentOption(
-            title = "Cash",
-            subtitle = "DA cash",
-            isSelected = selectedOption == "Cash",
-            onSelect = { onOptionSelected("Cash") },
-            showIcon = false
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Card option
-        PaymentOption(
-            title = "Card Edahabia",
-            subtitle = "Add Card",
-            isSelected = selectedOption == "Card",
-            onSelect = { onOptionSelected("Card") },
-            showIcon = true
-        )
+        options.forEachIndexed { index, option ->
+            PaymentOption(
+                title = option.title,
+                subtitle = option.subtitle,
+                isSelected = selectedOption == option.key,
+                onSelect = { onOptionSelected(option.key) },
+                iconRes = option.iconRes
+            )
+            if (index < options.lastIndex) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
     }
 }
 
@@ -122,13 +145,18 @@ private fun PaymentOption(
     subtitle: String,
     isSelected: Boolean,
     onSelect: () -> Unit,
-    showIcon: Boolean
+    iconRes: Int?
 ) {
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
         Text(
             text = title,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.Medium
+            ),
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -137,86 +165,102 @@ private fun PaymentOption(
                 .fillMaxWidth()
                 .border(
                     width = if (isSelected) 1.5.dp else 1.dp,
-                    color = if (isSelected) Color(0xFF149459) else Color.Gray,
-                    shape = RoundedCornerShape(8.dp)
+                    color = if (isSelected) Color(0xFF149459) else Color(0xFFE0E0E0),
+                    shape = RoundedCornerShape(12.dp)
                 )
-                .background(Color.White, RoundedCornerShape(8.dp))
-                .clickable { onSelect() }
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .clickable(onClick = onSelect)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (showIcon) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.credit_card_icon),
-                            contentDescription = "Card",
-                            modifier = Modifier.size(24.dp))
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(subtitle, fontSize = 16.sp)
-                    }
-                } else {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("DA", fontSize = 16.sp)
-                        Divider(
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp)
-                                .width(1.dp)
-                                .height(24.dp),
-                            color = Color.Black,
-                            thickness = 1.dp
-                        )
-                        Text("cash", fontSize = 16.sp)
-                    }
-                }
+                PaymentLabelRow(icon = iconRes, label = subtitle)
 
-                if (isSelected) {
-                    Image(
-                        painter = painterResource(id = R.drawable.button_black),
-                        contentDescription = "Selected",
-                        modifier = Modifier.size(24.dp))
-                } else if (showIcon) {
-                    Image(
-                        painter = painterResource(id = R.drawable.button_grey),
-                        contentDescription = "Add",
-                        modifier = Modifier.size(24.dp))
-                }
+                RadioButton(
+                    selected = isSelected,
+                    onClick = null, // null because the whole row is clickable
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color(0xFF149459),
+                        unselectedColor = Color(0xFFE0E0E0)
+                    )
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ContinueButton() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
+private fun PaymentLabelRow(icon: Int?, label: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Button(
-            onClick = { /* Handle continue */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF149459),
-                contentColor = Color.White
+        if (icon != null) {
+            Image(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
             )
-        ) {
             Text(
-                text = "Continue",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold)
+                text = label,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        } else {
+            Text(
+                text = "DA",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Divider(
+                modifier = Modifier
+                    .height(24.dp)
+                    .width(1.dp),
+                color = Color(0xFFE0E0E0),
+                thickness = 1.dp
+            )
+            Text(
+                text = "cash",
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+private fun ContinueButton() {
+    Button(
+        onClick = { /* Handle continue */ },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp)
+            .height(56.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF149459),
+            contentColor = Color.White
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 4.dp
+        )
+    ) {
+        Text(
+            text = "Continue",
+            style = MaterialTheme.typography.labelLarge.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true, device = "spec:width=411dp,height=891dp")
 @Composable
 fun PreviewPaymentMethod() {
-    PaymentMethod()
+    MaterialTheme {
+        PaymentMethod()
+    }
 }
