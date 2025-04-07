@@ -22,62 +22,63 @@ import com.example.myapplication.R
 fun PaymentMethod() {
     var selectedOption by remember { mutableStateOf("Cash") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF2F5FA))
     ) {
-        // Status bar with divider below
-        Column {
-            StatusBar()
-            Divider(
-                color = Color.Black,
-                thickness = 1.dp,
-                modifier = Modifier.fillMaxWidth()
-            )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                PaymentHeader()
+                PaymentOptions(selectedOption) { selectedOption = it }
+            }
+            ContinueButton()
         }
-
-        // Payment options
-        PaymentOptions(selectedOption) { selectedOption = it }
-
-        // Continue button at bottom
-        ContinueButton()
     }
 }
 
 @Composable
-private fun StatusBar() {
+private fun PaymentHeader() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "9:41",
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.Black
-        )
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(Color.White)
+                .border(1.dp, Color.LightGray, CircleShape)
+                .clickable { /* Handle back navigation */ },
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.fleche_icon_lonly),
+                contentDescription = "Back",
+                modifier = Modifier.size(24.dp)
+            )
+        }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Payment method",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 42.dp))
+
             Image(
-                painter = painterResource(id = R.drawable.signal),
-                contentDescription = "Signal",
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Image(
-                painter = painterResource(id = R.drawable.wifi),
-                contentDescription = "WiFi",
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Image(
-                painter = painterResource(id = R.drawable.battery),
-                contentDescription = "Battery",
-                modifier = Modifier.size(16.dp)
+                painter = painterResource(id = R.drawable.sparcles),
+                contentDescription = "Sparkle",
+                modifier = Modifier.size(90.85.dp, 84.dp)
             )
         }
     }
@@ -92,63 +93,8 @@ private fun PaymentOptions(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
-            .weight(1f)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Larger arrow (24dp) in white circle
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .border(1.dp, Color.LightGray, CircleShape)
-                    .clickable { /* Handle back navigation */ },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.fleche_icon_with_cercle),
-                    contentDescription = "Back",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            // Title with larger sparkles on the right
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Payment method",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp))
-                
-                // Larger sparkle icons with 9.15dp right margin
-                Box(modifier = Modifier.padding(end = 9.15.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.sparcles),
-                            contentDescription = "Sparkle",
-                            modifier = Modifier.size(90.85.dp, 84.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Image(
-                            painter = painterResource(id = R.drawable.sparcles),
-                            contentDescription = "Sparkle",
-                            modifier = Modifier.size(90.85.dp, 84.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        // Cash option with vertical divider
+        // Cash option
         PaymentOption(
             title = "Cash",
             subtitle = "DA cash",
@@ -182,14 +128,18 @@ private fun PaymentOption(
         Text(
             text = title,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
-                .border(1.5.dp, Color.Gray, RoundedCornerShape(8.dp)) // 1.5dp stroke width
+                .border(
+                    width = if (isSelected) 1.5.dp else 1.dp,
+                    color = if (isSelected) Color(0xFF149459) else Color.Gray,
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .background(Color.White, RoundedCornerShape(8.dp))
                 .clickable { onSelect() }
                 .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -204,13 +154,11 @@ private fun PaymentOption(
                         Image(
                             painter = painterResource(id = R.drawable.credit_card_icon),
                             contentDescription = "Card",
-                            modifier = Modifier.size(24.dp)
-                        )
+                            modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(subtitle, fontSize = 16.sp)
                     }
                 } else {
-                    // Vertical divider between DA and cash
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("DA", fontSize = 16.sp)
                         Divider(
@@ -246,20 +194,22 @@ private fun ContinueButton() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(20.dp)
     ) {
         Button(
             onClick = { /* Handle continue */ },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF149459))
+                .height(52.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF149459),
+                contentColor = Color.White
+            )
         ) {
             Text(
                 text = "Continue",
-                color = Color.White,
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold)
         }
     }
@@ -270,4 +220,3 @@ private fun ContinueButton() {
 fun PreviewPaymentMethod() {
     PaymentMethod()
 }
-/
