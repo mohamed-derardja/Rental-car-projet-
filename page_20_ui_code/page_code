@@ -11,13 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.R
 import androidx.compose.ui.unit.Dp
+import com.example.myapplication.R
 
 private const val CASH = "Cash"
 private const val CARD = "Card"
@@ -56,46 +57,43 @@ fun PaymentMethod() {
 
 @Composable
 private fun PaymentHeader(screenWidth: Dp) {
+    val topPadding = with(LocalDensity.current) { WindowInsets.statusBars.getTop(LocalDensity.current).toDp() }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(top = topPadding + 2.dp), // Very tight to the notch
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Back button
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(40.dp)
                 .clip(CircleShape)
                 .background(Color.White)
-                .border(1.dp, Color(0xFFE0E0E0), CircleShape)
+                .border(1.dp, Color.Black, CircleShape)
                 .clickable { /* Handle back navigation */ },
             contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.fleche_icon_lonly),
                 contentDescription = "Back",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
-
-        // Title with centered alignment
         Text(
             text = "Payment method",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             ),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(start = 8.dp)
         )
-
-        // Sparkle decoration with responsive sizing
         Image(
             painter = painterResource(id = R.drawable.sparcles),
             contentDescription = "Sparkle",
             modifier = Modifier
-                .size((screenWidth * 0.25f).coerceAtMost(100.dp))
-                .padding(end = 8.dp)
+                .size((screenWidth * 0.2f).coerceAtMost(72.dp))
+                .offset(x = 11.dp)
         )
     }
 }
@@ -165,7 +163,7 @@ private fun PaymentOption(
                 .fillMaxWidth()
                 .border(
                     width = if (isSelected) 1.5.dp else 1.dp,
-                    color = if (isSelected) Color(0xFF149459) else Color(0xFFE0E0E0),
+                    color = if (isSelected) Color(0xFF149459) else Color.Black,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .background(Color.White, RoundedCornerShape(12.dp))
@@ -182,10 +180,10 @@ private fun PaymentOption(
 
                 RadioButton(
                     selected = isSelected,
-                    onClick = null, // null because the whole row is clickable
+                    onClick = null,
                     colors = RadioButtonDefaults.colors(
                         selectedColor = Color(0xFF149459),
-                        unselectedColor = Color(0xFFE0E0E0)
+                        unselectedColor = Color.Black
                     )
                 )
             }
@@ -214,12 +212,11 @@ private fun PaymentLabelRow(icon: Int?, label: String) {
                 text = "DA",
                 style = MaterialTheme.typography.bodyMedium
             )
-            Divider(
+            Box(
                 modifier = Modifier
-                    .height(24.dp)
-                    .width(1.dp),
-                color = Color(0xFFE0E0E0),
-                thickness = 1.dp
+                    .width(1.dp)
+                    .height(16.dp)
+                    .background(Color.Black)
             )
             Text(
                 text = "cash",
@@ -235,23 +232,18 @@ private fun ContinueButton() {
         onClick = { /* Handle continue */ },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp)
-            .height(56.dp),
-        shape = RoundedCornerShape(16.dp),
+            .padding(vertical = 18.dp), // Increased padding for a bigger button
+        shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF149459),
             contentColor = Color.White
-        ),
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 4.dp
         )
     ) {
         Text(
             text = "Continue",
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp
+                fontSize = 24.sp // Increased font size
             )
         )
     }
