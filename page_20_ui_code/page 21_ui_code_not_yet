@@ -1,0 +1,118 @@
+package com.example.carrental.ui.screens
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+import com.example.myapplication.R
+
+@Composable
+fun CashOptionScreen(onExit: () -> Unit = {}) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF2F5FA))
+            .padding(horizontal = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .clickable { onExit() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.no_x),
+                        contentDescription = "Close"
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "THANK YOU",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.width(34.dp))
+            }
+
+            Image(
+                painter = painterResource(id = R.drawable.img),
+                contentDescription = "Car Keys",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+            )
+
+            Text(
+                text = "Thank you for choosing our car rental service! We’ve noted your preference for cash payment. Kindly bring your driver’s license with you when picking up the car to complete the necessary verification",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 32.dp, start = 12.dp, end = 12.dp)
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = onExit,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF149459)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Text(
+                    text = "Exit",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCashOptionScreen() {
+    CashOptionScreen(onExit = {})
+}
