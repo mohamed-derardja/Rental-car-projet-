@@ -11,13 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.Dp
 import com.example.myapplication.R
 
 private const val CASH = "Cash"
@@ -34,12 +34,11 @@ data class PaymentMethodOption(
 fun PaymentMethod() {
     var selectedOption by remember { mutableStateOf(CASH) }
 
-    BoxWithConstraints(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF2F5FA))
     ) {
-        val screenWidth = maxWidth
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -47,7 +46,7 @@ fun PaymentMethod() {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                PaymentHeader(screenWidth)
+                PaymentHeader()
                 PaymentOptions(selectedOption) { selectedOption = it }
             }
             ContinueButton()
@@ -56,13 +55,16 @@ fun PaymentMethod() {
 }
 
 @Composable
-private fun PaymentHeader(screenWidth: Dp) {
-    val topPadding = with(LocalDensity.current) { WindowInsets.statusBars.getTop(LocalDensity.current).toDp() }
+private fun PaymentHeader() {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val topPadding = with(LocalDensity.current) {
+        WindowInsets.statusBars.getTop(this).toDp()
+    }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = topPadding + 2.dp), 
+            .padding(top = topPadding + 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -72,7 +74,7 @@ private fun PaymentHeader(screenWidth: Dp) {
                 .clip(CircleShape)
                 .background(Color.White)
                 .border(1.dp, Color.Black, CircleShape)
-                .clickable { /* Handle back navigation */ },
+                .clickable { },
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -229,10 +231,10 @@ private fun PaymentLabelRow(icon: Int?, label: String) {
 @Composable
 private fun ContinueButton() {
     Button(
-        onClick = { /* Handle continue */ },
+        onClick = { },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp), 
+            .padding(vertical = 18.dp),
         shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF149459),
@@ -243,7 +245,7 @@ private fun ContinueButton() {
             text = "Continue",
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 24.sp // Increased font size
+                fontSize = 24.sp
             )
         )
     }
