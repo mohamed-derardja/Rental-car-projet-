@@ -62,7 +62,7 @@ private fun PaymentHeader(screenWidth: Dp) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = topPadding + 2.dp), // Very tight to the notch
+            .padding(top = topPadding + 2.dp), 
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -232,7 +232,7 @@ private fun ContinueButton() {
         onClick = { /* Handle continue */ },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp), // Increased padding for a bigger button
+            .padding(vertical = 18.dp), 
         shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF149459),
